@@ -85,3 +85,31 @@ print('--------x--------x--------x--------x--------x--------x--------x--------x-
 # pd.set_option('display.max_columns', None)
 print(df.describe())
 print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')
+# Flow Bytes/s and Flow Packets/s max values are infinity
+df = df.drop('Flow Bytes/s', axis='columns')
+df = df.drop(' Flow Packets/s', axis='columns')
+columns = df.columns.tolist()
+
+# Except from ports column, normalize all features
+scaler = MinMaxScaler(feature_range=(0, 1))
+for i in columns:
+    try:
+        if i == ' Destination Port':
+            continue
+        else:
+            df[[f"{i}"]] = scaler.fit_transform(df[[f"{i}"]])
+    except ValueError:
+        continue
+
+# Delete columns with all zero values
+for k in range(len(columns)):
+    if df[columns[k]].min() == 0 and df[columns[k]].max() == 0:
+        df = df.drop(columns[k], axis='columns')
+
+print('                                     Data normalized')
+print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')
+print(df.describe())
+print(df.shape)
+print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')
+df.to_csv('pre_processed_dataset.csv')
+
