@@ -43,6 +43,7 @@ port_dicts = OrderedDict(sorted(port_dicts.items()))
 # Find most used port value
 values = port_dicts.values()
 max_used_port_value = max(values)
+max_used_port = 0
 
 # Find the port adjacent to max used value
 for i in port_dicts:
