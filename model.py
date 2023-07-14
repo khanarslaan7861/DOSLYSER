@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
 from mlxtend.plotting import plot_confusion_matrix
 from matplotlib import pyplot as plt
 
@@ -29,7 +29,7 @@ def test(model, x_tr, x_te, y_tr, y_te, fold):
     print(f"Recall: {recall_score(y_tr, y_pred) * 100}")
     print(f"F1 : {f1_score(y_tr, y_pred) * 100}")
     con_matrix = confusion_matrix(y_tr, y_pred)
-    fig, ax = plot_confusion_matrix(conf_mat=con_matrix, figsize=(6, 6))
+    fig, ax = plot_confusion_matrix(conf_mat=con_matrix, figsize=(6, 6), cmap=plt.cm.Reds)
     plt.xlabel('Predictions')
     plt.ylabel('Actual')
     plt.title('Confusion Matrix')
@@ -40,3 +40,21 @@ print('Logistic Regression')
 test(LogisticRegression(solver='liblinear', multi_class='ovr'), x_train, x_test, y_train, y_test, folds)
 print()
 
+print('Random Forest Classifier with 10 estimators')
+test(RandomForestClassifier(n_estimators=10), x_train, x_test, y_train, y_test, folds)
+print()
+
+print('Random Forest Classifier with 100 estimators')
+test(RandomForestClassifier(n_estimators=100), x_train, x_test, y_train, y_test, folds)
+print()
+
+print('K Nearest Neighbour Classifier')
+test(KNeighborsClassifier(n_neighbors=1), x_train, x_test, y_train, y_test, folds)
+print()
+
+print('Gaussian Naive Bayes Classifier')
+test(GaussianNB(), x_train, x_test, y_train, y_test, folds)
+print()
+
+print('Decision Tree')
+test(DecisionTreeClassifier(), x_train, x_test, y_train, y_test, folds)
