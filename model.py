@@ -1,7 +1,11 @@
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_predict
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn import tree
 from mlxtend.plotting import plot_confusion_matrix
 from matplotlib import pyplot as plt
 
@@ -30,3 +34,9 @@ def test(model, x_tr, x_te, y_tr, y_te, fold):
     plt.ylabel('Actual')
     plt.title('Confusion Matrix')
     plt.show()
+
+
+print('Logistic Regression')
+test(LogisticRegression(solver='liblinear', multi_class='ovr'), x_train, x_test, y_train, y_test, folds)
+print()
+
