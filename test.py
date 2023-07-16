@@ -17,44 +17,41 @@ X, y = data[:, 0:n_features], data[:, n_features]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 folds = StratifiedKFold(n_splits=10)
 
-# knn = KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)
-# y_pred = cross_val_predict(knn, X_test, y_test, cv=folds)
-# y_score = knn.predict_proba(X_test)[:, 1]
-# roc_auc = roc_auc_score(y_test, y_score) * 100
-# fpr, tpr, _ = roc_curve(y_test, y_score)
-# roc_cur = RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc, estimator_name='KNN')
-# accuracy = accuracy_score(y_test, y_pred) * 100
-# precision = precision_score(y_test, y_pred) * 100
-# recall = recall_score(y_test, y_pred) * 100
-# f1 = f1_score(y_test, y_pred) * 100
-# print(f"Accuracy: {round(accuracy, 6)}")
-# print(f"Precision: {round(precision, 6)}")
-# print(f"Recall: {round(recall, 6)}")
-# print(f"F1 : {round(f1, 6)}")
-# print(f"ROC AUC: {round(roc_auc, 6)}")
-# roc_cur.plot()
-# con_mat = confusion_matrix(y_test, y_pred)
-# (ConfusionMatrixDisplay(con_mat, display_labels=knn.classes_)).plot(cmap=plt.cm.Reds)
-# plt.ion()
-# plt.show()
-# plt.pause(0.01)
 
-logistic_regression = LogisticRegression(solver='liblinear', multi_class='ovr')
-random_forest = RandomForestClassifier(n_estimators=100)
-k_neighbour = KNeighborsClassifier(n_neighbors=3)
-gaussian_naive_bayes = GaussianNB()
-decision_tree = DecisionTreeClassifier()
+def scoring(model):
+    y_pred = cross_val_predict(model, X_test, y_test, cv=folds)
+    y_score = model.predict_proba(X_test)[:, 1]
+    roc_auc = roc_auc_score(y_test, y_score) * 100
+    fpr, tpr, _ = roc_curve(y_test, y_score)
+    roc_cur = RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc, estimator_name=f'{model}')
+    accuracy = accuracy_score(y_test, y_pred) * 100
+    precision = precision_score(y_test, y_pred) * 100
+    recall = recall_score(y_test, y_pred) * 100
+    f1 = f1_score(y_test, y_pred) * 100
+    con_mat = confusion_matrix(y_test, y_pred)
+    print('===================================================')
+    print(f'Model: {model}')
+    print(f"Accuracy: {round(accuracy, 6)}")
+    print(f"Precision: {round(precision, 6)}")
+    print(f"Recall: {round(recall, 6)}")
+    print(f"F1 : {round(f1, 6)}")
+    print(f"ROC AUC: {round(roc_auc, 6)}")
+    roc_cur.plot()
+    ConfusionMatrixDisplay(con_mat, display_labels=model.classes_).plot(cmap=plt.cm.Reds)
+    plt.ion()
+    plt.show()
+    plt.pause(0.01)
 
-models = {
-    "Logistic Regression": LogisticRegression(),
-    "Random Forest Classifier with 100 estimators": RandomForestClassifier(),
-    "K Nearest Neighbour Classifier": KNeighborsClassifier(),
-    "Gaussian Naive Bayes Classifier": GaussianNB(),
-    "Decision Tree": DecisionTreeClassifier()
-}
 
-for i in models:
-    model = models[i]
-    print(model)
+logistic_regression = LogisticRegression(solver='liblinear', multi_class='ovr').fit(X_train, y_train)
+random_forest = RandomForestClassifier(n_estimators=100).fit(X_train, y_train)
+knn = KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)
+gaussian_naive_bayes = GaussianNB().fit(X_train, y_train)
+decision_tree = DecisionTreeClassifier().fit(X_train, y_train)
 
+scoring(logistic_regression)
+scoring(random_forest)
+scoring(knn)
+scoring(gaussian_naive_bayes)
+scoring(decision_tree)
 plt.pause(1000)
