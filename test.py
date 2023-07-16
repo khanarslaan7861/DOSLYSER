@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score, cross_val_predict
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, roc_auc_score,  \
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, roc_auc_score, \
     confusion_matrix, ConfusionMatrixDisplay, RocCurveDisplay
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -10,40 +10,51 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 
 df = pd.read_csv("pre_processed_dataset.csv", low_memory=False)
-df.drop(columns=df.columns[0], axis=1,  inplace=True)
+df.drop(columns=df.columns[0], axis=1, inplace=True)
 data = df.to_numpy()
 n_samples, n_features = data.shape[0], data.shape[1] - 1
 X, y = data[:, 0:n_features], data[:, n_features]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 folds = StratifiedKFold(n_splits=10)
 
-
-knn = KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)
-y_pred = cross_val_predict(knn, X_test, y_test, cv=folds)
-y_score = knn.predict_proba(X_test)[:, 1]
-# fpr, tpr, threshold = roc_curve(y_test, y_score)
-# roc_auc = roc_auc_score(y_test, y_score)
-# print(f"Accuracy: {accuracy_score(y_test, y_pred) * 100}")
-# print(f"Precision: {precision_score(y_test, y_pred) * 100}")
-# print(f"Recall: {recall_score(y_test, y_pred) * 100}")
-# print(f"F1 : {f1_score(y_test, y_pred) * 100}")
-# print(f"ROC AUC: {round((roc_auc * 100), 6)}")
-RocCurveDisplay.from_estimator(knn, X_test, y_test)
-
-#
+# knn = KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)
+# y_pred = cross_val_predict(knn, X_test, y_test, cv=folds)
+# y_score = knn.predict_proba(X_test)[:, 1]
+# roc_auc = roc_auc_score(y_test, y_score) * 100
+# fpr, tpr, _ = roc_curve(y_test, y_score)
+# roc_cur = RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc, estimator_name='KNN')
+# accuracy = accuracy_score(y_test, y_pred) * 100
+# precision = precision_score(y_test, y_pred) * 100
+# recall = recall_score(y_test, y_pred) * 100
+# f1 = f1_score(y_test, y_pred) * 100
+# print(f"Accuracy: {round(accuracy, 6)}")
+# print(f"Precision: {round(precision, 6)}")
+# print(f"Recall: {round(recall, 6)}")
+# print(f"F1 : {round(f1, 6)}")
+# print(f"ROC AUC: {round(roc_auc, 6)}")
+# roc_cur.plot()
 # con_mat = confusion_matrix(y_test, y_pred)
 # (ConfusionMatrixDisplay(con_mat, display_labels=knn.classes_)).plot(cmap=plt.cm.Reds)
-plt.show()
+# plt.ion()
+# plt.show()
+# plt.pause(0.01)
+
+logistic_regression = LogisticRegression(solver='liblinear', multi_class='ovr')
+random_forest = RandomForestClassifier(n_estimators=100)
+k_neighbour = KNeighborsClassifier(n_neighbors=3)
+gaussian_naive_bayes = GaussianNB()
+decision_tree = DecisionTreeClassifier()
 
 models = {
-    "Logistic Regression": LogisticRegression(solver='liblinear', multi_class='ovr'),
-    "Random Forest Classifier with 100 estimators": RandomForestClassifier(n_estimators=100),
-    "K Nearest Neighbour Classifier": KNeighborsClassifier(n_neighbors=1),
+    "Logistic Regression": LogisticRegression(),
+    "Random Forest Classifier with 100 estimators": RandomForestClassifier(),
+    "K Nearest Neighbour Classifier": KNeighborsClassifier(),
     "Gaussian Naive Bayes Classifier": GaussianNB(),
     "Decision Tree": DecisionTreeClassifier()
 }
 
 for i in models:
-    # model = models[i]
-    # print(model)
-    pass
+    model = models[i]
+    print(model)
+
+plt.pause(1000)

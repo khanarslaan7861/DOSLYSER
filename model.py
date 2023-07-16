@@ -42,16 +42,12 @@ print('Logistic Regression')
 test(LogisticRegression(solver='liblinear', multi_class='ovr'), X_train, X_test, y_train, y_test, folds)
 print()
 
-print('Random Forest Classifier with 10 estimators')
-test(RandomForestClassifier(n_estimators=10), X_train, X_test, y_train, y_test, folds)
-print()
-
 print('Random Forest Classifier with 100 estimators')
 test(RandomForestClassifier(n_estimators=100), X_train, X_test, y_train, y_test, folds)
 print()
 
 print('K Nearest Neighbour Classifier')
-test(KNeighborsClassifier(n_neighbors=1), X_train, X_test, y_train, y_test, folds)
+test(KNeighborsClassifier(n_neighbors=3), X_train, X_test, y_train, y_test, folds)
 print()
 
 print('Gaussian Naive Bayes Classifier')
