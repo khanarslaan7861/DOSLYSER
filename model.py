@@ -10,8 +10,7 @@ from mlxtend.plotting import plot_confusion_matrix
 from matplotlib import pyplot as plt
 
 # Data Feature Split
-df = pd.read_csv("pre_processed_dataset.csv", low_memory=False)
-df.drop(columns=df.columns[0], axis=1,  inplace=True)
+df = pd.read_parquet("pre_processed_dataset.par")
 data = df.to_numpy()
 n_samples, n_features = data.shape[0], data.shape[1] - 1
 X, y = data[:, 0:n_features], data[:, n_features]

@@ -112,5 +112,4 @@ print('--------x--------x--------x--------x--------x--------x--------x--------x-
 print(df.describe())
 print(df.shape)
 print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')
-df.to_csv('pre_processed_dataset.csv')
-
+df.to_parquet('pre_processed_dataset.par')

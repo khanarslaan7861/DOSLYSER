@@ -9,8 +9,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 
-df = pd.read_csv("pre_processed_dataset.csv", low_memory=False)
-df.drop(columns=df.columns[0], axis=1, inplace=True)
+df = pd.read_csv("pre_processed_dataset.par")
 data = df.to_numpy()
 n_samples, n_features = data.shape[0], data.shape[1] - 1
 X, y = data[:, 0:n_features], data[:, n_features]
