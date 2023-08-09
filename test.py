@@ -1,5 +1,5 @@
 import pickle
-
+import time
 import matplotlib.pyplot as plt
 import pandas as pd
 import pickle as pk
@@ -61,9 +61,9 @@ def main():
               'KNN': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
               'Gaussian Naive Bayes': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
               'Decision Tree': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []}}
-
-    i = 0
-    while i <= 2:
+    start = time.time()
+    for i in range(1000):
+        print(f'''{i + 1}'th iteration''')
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
         folds = StratifiedKFold(n_splits=10)
 
@@ -88,6 +88,8 @@ def main():
             scores[model_name]['F1 Score'].append(f1)
             scores[model_name]['ROC AUC'].append(roc_auc)
         i += 1
+    end = time.time() - start
+    print(end)
     return scores
 
 
