@@ -2,7 +2,7 @@ import pandas as pd
 from collections import OrderedDict
 from sklearn.preprocessing import MinMaxScaler
 
-df = pd.read_csv("Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv", low_memory=False)
+df = pd.read_csv("csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv", low_memory=False)
 print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')
 print('                                     DF Describe')
 print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')

@@ -1,11 +1,11 @@
+import os
+cd = os.path.dirname(__file__) + '/..'
 import pickle
 import time
-import matplotlib.pyplot as plt
 import pandas as pd
-import pickle as pk
-from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score, cross_val_predict
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_predict
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, roc_auc_score, \
-    confusion_matrix, ConfusionMatrixDisplay, RocCurveDisplay
+    confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -21,7 +21,7 @@ def load_data(filename):
     return X, y
 
 
-def evaluate_model(model, model_name, X, y, folds):
+def evaluate_model(model, X, y, folds):
     y_pred = cross_val_predict(model, X, y, cv=folds)
     roc_auc = round((roc_auc_score(y, cross_val_predict(model, X, y, cv=folds, method='predict_proba')[:, 1]) * 100), 6)
     accuracy = round((accuracy_score(y, y_pred) * 100), 6)
@@ -29,50 +29,34 @@ def evaluate_model(model, model_name, X, y, folds):
     recall = round((recall_score(y, y_pred) * 100), 6)
     f1 = round((f1_score(y, y_pred) * 100), 6)
     con_mat = confusion_matrix(y, y_pred)
-
-    # print(f'Model: {model_name}')
-    # print(f"Accuracy: {accuracy}")
-    # print(f"Precision: {precision}")
-    # print(f"Recall: {recall}")
-    # print(f"F1 : {f1}")
-    # print(f"ROC AUC: {roc_auc}")
-    # print('===================================================')
     return roc_auc, con_mat, accuracy, precision, recall, f1
 
 
-def plot_roc_curve(fpr, tpr, roc_auc, model_name):
-    RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc, estimator_name=f'{model_name}').plot()
-    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title(f'ROC Curve - {model_name}')
-    plt.legend(loc='lower right')
-
-
-def plot_confusion_matrix(conf_matrix, classes, model_name):
-    ConfusionMatrixDisplay(confusion_matrix=conf_matrix, display_labels=classes).plot(cmap=plt.cm.Reds)
-    plt.title(f'Confusion Matrix - {model_name}')
-
-
-def main():
-    X, y = load_data("pre_processed_dataset.par")
+def main(n):
+    X, y = load_data(f'{cd}/par/pre_processed_dataset.par')
     scores = {'Logistic Regression': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
               'Random Forest': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
               'KNN': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
               'Gaussian Naive Bayes': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
               'Decision Tree': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []}}
     start = time.time()
-    for i in range(1000):
+    for i in range(n):
         print(f'''{i + 1}'th iteration''')
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
         folds = StratifiedKFold(n_splits=10)
 
+        logreg = LogisticRegression(solver='liblinear', multi_class='ovr').fit(X_train, y_train)
+        ranfor = RandomForestClassifier(n_estimators=100).fit(X_train, y_train)
+        knn = KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)
+        navbay = GaussianNB().fit(X_train, y_train)
+        dectre = DecisionTreeClassifier().fit(X_train, y_train)
+
         models = [
-            ('Logistic Regression', LogisticRegression(solver='liblinear', multi_class='ovr').fit(X_train, y_train)),
-            ('Random Forest', RandomForestClassifier(n_estimators=100).fit(X_train, y_train)),
-            ('KNN', KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)),
-            ('Gaussian Naive Bayes', GaussianNB().fit(X_train, y_train)),
-            ('Decision Tree', DecisionTreeClassifier().fit(X_train, y_train))
+            ('Logistic Regression', logreg),
+            ('Random Forest', ranfor),
+            ('KNN', knn),
+            ('Gaussian Naive Bayes', navbay),
+            ('Decision Tree', dectre)
         ]
 
         for model_name, model in models:
@@ -80,8 +64,6 @@ def main():
                                                                                    folds)
             fpr, tpr, _ = roc_curve(y_test,
                                     cross_val_predict(model, X_test, y_test, cv=folds, method='predict_proba')[:, 1])
-            # plot_roc_curve(fpr, tpr, roc_auc, model_name)
-            # plot_confusion_matrix(conf_matrix, model.classes_, model_name)
             scores[model_name]['Accuracy'].append(accuracy)
             scores[model_name]['Precision'].append(precision)
             scores[model_name]['Recall'].append(recall)
@@ -89,12 +71,11 @@ def main():
             scores[model_name]['ROC AUC'].append(roc_auc)
         i += 1
     end = time.time() - start
-    print(end)
+    print(f'{end}')
     return scores
 
 
-# plt.show()
-
 if __name__ == "__main__":
-    with open('scores.pkl', 'wb') as handle:
-        pickle.dump(main(), handle, protocol=pickle.HIGHEST_PROTOCOL)
+    iters = int(input('Enter number of iterations: '))
+    with open(f'{cd}/pkl/scores.pkl', 'wb') as handle:
+        pickle.dump(main(iters), handle, protocol=pickle.HIGHEST_PROTOCOL)

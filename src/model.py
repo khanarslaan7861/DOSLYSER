@@ -1,3 +1,6 @@
+import pickle
+import os
+cd = os.path.dirname(__file__) + '/..'
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score, cross_val_predict
@@ -52,22 +55,31 @@ def plot_confusion_matrix(conf_matrix, classes, model_name):
 
 
 def main():
-    X, y = load_data("pre_processed_dataset.par")
+    X, y = load_data(f'{cd}/par/pre_processed_dataset.par')
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
     folds = StratifiedKFold(n_splits=10)
 
+    logreg = LogisticRegression(solver='liblinear', multi_class='ovr').fit(X_train, y_train)
+    ranfor = RandomForestClassifier(n_estimators=100).fit(X_train, y_train)
+    knn = KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)
+    navbay = GaussianNB().fit(X_train, y_train)
+    dectre = DecisionTreeClassifier().fit(X_train, y_train)
+
     models = [
-        ('Logistic Regression', LogisticRegression(solver='liblinear', multi_class='ovr').fit(X_train, y_train)),
-        ('Random Forest', RandomForestClassifier(n_estimators=100).fit(X_train, y_train)),
-        ('KNN', KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)),
-        ('Gaussian Naive Bayes', GaussianNB().fit(X_train, y_train)),
-        ('Decision Tree', DecisionTreeClassifier().fit(X_train, y_train))
+        ('Logistic Regression', logreg),
+        ('Random Forest', ranfor),
+        ('KNN', knn),
+        ('Gaussian Naive Bayes', navbay),
+        ('Decision Tree', dectre)
     ]
+
     for model_name, model in models:
         roc_auc, conf_matrix = evaluate_model(model, model_name, X_test, y_test, folds)
         fpr, tpr, _ = roc_curve(y_test, cross_val_predict(model, X_test, y_test, cv=folds, method='predict_proba')[:, 1])
         plot_roc_curve(fpr, tpr, roc_auc, model_name)
         plot_confusion_matrix(conf_matrix, model.classes_, model_name)
+        with open(f'{cd}/pkl/{model_name}.pkl', 'wb') as handle:
+            pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     plt.show()
 
