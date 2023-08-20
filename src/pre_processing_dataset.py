@@ -1,8 +1,10 @@
 import pandas as pd
+import os
+cd = os.path.dirname(__file__) + '/..'
 from collections import OrderedDict
 from sklearn.preprocessing import MinMaxScaler
 
-df = pd.read_csv("csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv", low_memory=False)
+df = pd.read_csv(f'{cd}/csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv', low_memory=False)
 print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')
 print('                                     DF Describe')
 print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')
@@ -112,4 +114,4 @@ print('--------x--------x--------x--------x--------x--------x--------x--------x-
 print(df.describe())
 print(df.shape)
 print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')
-df.to_parquet('pre_processed_dataset.par')
+df.to_parquet(f'{cd}/par/pre_processed_dataset.par')

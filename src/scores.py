@@ -60,8 +60,7 @@ def main(n):
         ]
 
         for model_name, model in models:
-            roc_auc, conf_matrix, accuracy, precision, recall, f1 = evaluate_model(model, model_name, X_test, y_test,
-                                                                                   folds)
+            roc_auc, conf_matrix, accuracy, precision, recall, f1 = evaluate_model(model, X_test, y_test, folds)
             fpr, tpr, _ = roc_curve(y_test,
                                     cross_val_predict(model, X_test, y_test, cv=folds, method='predict_proba')[:, 1])
             scores[model_name]['Accuracy'].append(accuracy)
