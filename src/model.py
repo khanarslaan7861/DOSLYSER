@@ -1,9 +1,9 @@
-import pickle
+import joblib
 import os
 cd = os.path.dirname(__file__) + '/..'
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score, cross_val_predict
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_predict
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, roc_auc_score, \
     confusion_matrix, ConfusionMatrixDisplay, RocCurveDisplay
 from sklearn.linear_model import LogisticRegression
@@ -50,13 +50,13 @@ def plot_roc_curve(fpr, tpr, roc_auc, model_name):
 
 
 def plot_confusion_matrix(conf_matrix, classes, model_name):
-    ConfusionMatrixDisplay(confusion_matrix=conf_matrix, display_labels=classes).plot(cmap=plt.cm.Reds)
+    ConfusionMatrixDisplay(confusion_matrix=conf_matrix, display_labels=classes).plot(cmap=plt.cm.viridis)
     plt.title(f'Confusion Matrix - {model_name}')
 
 
 def main():
     X, y = load_data(f'{cd}/par/pre_processed_dataset.par')
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     folds = StratifiedKFold(n_splits=10)
 
     logreg = LogisticRegression(solver='liblinear', multi_class='ovr').fit(X_train, y_train)
@@ -77,9 +77,11 @@ def main():
         roc_auc, conf_matrix = evaluate_model(model, model_name, X_test, y_test, folds)
         fpr, tpr, _ = roc_curve(y_test, cross_val_predict(model, X_test, y_test, cv=folds, method='predict_proba')[:, 1])
         plot_roc_curve(fpr, tpr, roc_auc, model_name)
+        plt.savefig(f'{cd}/img/{model_name}_curve.png', dpi=1000)
         plot_confusion_matrix(conf_matrix, model.classes_, model_name)
+        plt.savefig(f'{cd}/img/{model_name}_matrix.png', dpi=1000)
         with open(f'{cd}/pkl/{model_name}.pkl', 'wb') as handle:
-            pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            joblib.dump(model, handle, protocol=4)
 
     plt.show()
 
