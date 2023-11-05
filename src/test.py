@@ -1,13 +1,7 @@
 import pickle
 import os
-cd = os.path.dirname(__file__) + '/..'
-pkl = os.listdir(f'{cd}/pkl/')
+cd = os.path.dirname(__file__) + '/../pkl/scores.pkl'
 
-models = [
-        ('Logistic Regression', logreg),
-        ('Random Forest', ranfor),
-        ('KNN', knn),
-        ('Gaussian Naive Bayes', navbay),
-        ('Decision Tree', dectre)
-    ]
-
+with open(cd, 'rb') as file:
+        pkl = pickle.load(file)
+        print(pkl)

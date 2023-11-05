@@ -1,16 +1,16 @@
 import joblib
 import os
-cd = os.path.dirname(__file__) + '/..'
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_predict
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, roc_auc_score, \
     confusion_matrix, ConfusionMatrixDisplay, RocCurveDisplay
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
+cd = os.path.dirname(__file__) + '/..'
 
 
 def load_data(filename):
@@ -64,13 +64,15 @@ def main():
     knn = KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)
     navbay = GaussianNB().fit(X_train, y_train)
     dectre = DecisionTreeClassifier().fit(X_train, y_train)
+    histclass = HistGradientBoostingClassifier().fit(X_train, y_train)
 
     models = [
         ('Logistic Regression', logreg),
         ('Random Forest', ranfor),
         ('KNN', knn),
         ('Gaussian Naive Bayes', navbay),
-        ('Decision Tree', dectre)
+        ('Decision Tree', dectre),
+        ('Histogram-based Gradient Boosting Classification', histclass)
     ]
 
     for model_name, model in models:

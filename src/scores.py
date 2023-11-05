@@ -1,5 +1,4 @@
 import os
-cd = os.path.dirname(__file__) + '/..'
 import pickle
 import time
 import pandas as pd
@@ -7,10 +6,11 @@ from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, roc_auc_score, \
     confusion_matrix
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
+cd = os.path.dirname(__file__) + '/..'
 
 
 def load_data(filename):
@@ -38,7 +38,9 @@ def main(n):
               'Random Forest': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
               'KNN': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
               'Gaussian Naive Bayes': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
-              'Decision Tree': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []}}
+              'Decision Tree': {'Accuracy': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'ROC AUC': []},
+              'Histogram-based Gradient Boosting Classification Tree': {'Accuracy': [], 'Precision': [], 'Recall': [],
+                                                                        'F1 Score': [], 'ROC AUC': []}}
     start = time.time()
     for i in range(n):
         print(f'''{i + 1}'th iteration''')
@@ -50,8 +52,10 @@ def main(n):
         knn = KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)
         navbay = GaussianNB().fit(X_train, y_train)
         dectre = DecisionTreeClassifier().fit(X_train, y_train)
+        histclass = HistGradientBoostingClassifier().fit(X_train, y_train)
 
         models = [
+            ('Histogram-based Gradient Boosting Classification Tree', histclass),
             ('Logistic Regression', logreg),
             ('Random Forest', ranfor),
             ('KNN', knn),

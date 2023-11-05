@@ -1,8 +1,8 @@
 import pandas as pd
 import os
-cd = os.path.dirname(__file__) + '/..'
 from collections import OrderedDict
 from sklearn.preprocessing import MinMaxScaler
+cd = os.path.dirname(__file__) + '/..'
 
 df = pd.read_csv(f'{cd}/csv/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv', low_memory=False)
 print('--------x--------x--------x--------x--------x--------x--------x--------x--------x--------')
